@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no,viewport-fit=cover">
+    <meta name="renderer" content="webkit">
+    <title>贷来顺管理系统</title>
+</head>
+
+<body>
+    <h1>Register</h1>
+    <input type="text" id="username">
+    <input type="text" id="password">
+    <button onclick="register()">注册</button>
+    <script src="./js/jquery-3.1.1.min.js"></script>
+    <script>
+        function register() {
+            var username = $("#username").val()
+            var password = $("#password").val()
+            console.log(username + "---" + password)
+            $.getJSON({
+                url: 'http://localhost:8088/websocket/user/register',
+                type: 'POST',
+                contentType: "application/json",
+                data: JSON.stringify({
+                    username: username,
+                    password: password
+                })
+            }).done(function (data) {
+                if (data.code == 1) {
+                    var obj = data.content
+                    console.log(data.content)
+                } else {
+                    console.log(data.errorMsg)
+                }
+            }).fail(function (e) {
+                console.error(e.statusText)
+            })
+        }
+    </script>
+</body>
+
+</html>
