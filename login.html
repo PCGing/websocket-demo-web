@@ -1,9 +1,112 @@
-<h1>login.html</h1>
-<button onclick="toRegister"></button>
-<script>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, width=device-width, height=device-height, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
+    <title>聊天系统 | 登录</title>
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
+    <link href="./css/toastr/toastr.min.css" rel="stylesheet">
+</head>
 
-    function toRegister(){
-        location.href = "./register.html"
-    }
+<body  class="gray-bg">
+    <div style="position: absolute;width: 100%;top: 0;bottom: 0;background-color: rgba(0,0,0,.75);"></div>
+    <div class="middle-box text-center loginscreen animated fadeIn" onkeydown="keyLogin();">
+        <div>
+            <h5 class="m-t" style="color:#eee;font-size: 18px;opacity: 0.8;">登录系统</h5>
+            <div class="m-t-lg" style="position:relative;width: 80%;margin-left: 10%;">
+                <div class="form-group">
+                    <input type="text" id="username" style="opacity: 0.9;" class="form-control" placeholder="手机号"required="">
+                </div>
+                <div class="form-group">
+                    <input id="password" type="password" style="opacity: 0.9;" class="form-control" placeholder="密码"
+                        required="">
+                </div>
+                <button type="button" data-style="zoom-in" style="opacity: 0.9;" onclick="login()" class="btn btn-primary block full-width m-b">登录</button>
+                <a style="float:right;" onclick="forgetPassword()">忘记登录密码？</a>
+            </div>
+        </div>
+    </div>
 
-</script>
+    <script src="./js/jquery-3.1.1.min.js"></script>
+    <script src="./js/jquery.cookie.js"></script>
+    <script src="./js/toastr/toastr.min.js"></script>
+    <script>
+        var bathpath = 'http://localhost:8088/websocket/'
+        if (window.location.href.indexOf('localhost') < 0) {
+            bathpath = 'http://114.115.200.225:8088/websocket/'
+        }
+
+        function keyLogin() {
+            if (event.keyCode == 13)  //回车键的键值为13
+                login()
+        }
+
+        function login() {
+            $.getJSON({
+                url: bathpath + 'user/login',
+                type: 'post',
+                data: {
+                    username: $('#username').val(),
+                    password: $('#password').val()
+                }
+            })
+                .done(function (data) {
+                    if (data.code == 1) {
+                        console.log(data.content)
+                        $.cookie('user', JSON.stringify(data.content), {expires: 240 / 24})
+                        // $.cookie('sessionToken', data.content.sessionToken)
+                        hint("登录成功")
+                        window.setTimeout("window.location.href = './index.html?_" + new Date().getTime() + "'", 200)
+                    } else {
+                        swal({
+                            title: '出错了',
+                            text: data.errorMsg || data.msg,
+                            type: "warning"
+                        })
+                    }
+                })
+                .fail(function (e) {
+                    console.error(e.statusText)
+                    toastr.info('登录失败')
+                })
+        }
+
+        /**
+         * @Author : Write By PCG
+         * @Description:   提示信息
+         * @Date: 16:22 2018/3/2
+         */
+        function hint(status) {
+            var msg = status;
+            toastr.options.timeOut = 2000;
+            toastr.options.showEasing = "swing";
+            toastr.options.hideEasing = "linear";
+            toastr.options.showMethod = "fadeIn";
+            toastr.options.hideMethod = "fadeOut";
+            toastr.options.progressBar = false;
+            toastr.options.positionClass = 'toast-top-center';
+            toastr.options.onclick = null;
+            var $toast = toastr['success'](msg, '');
+        }
+
+        /**
+         * @Author : Write By PCG
+         * @Description:   错误提示信息
+         * @Date: 11:04 2018/3/7
+         */
+        function errorhint(status) {
+            var msg = status;
+            toastr.options.timeOut = 2000;
+            toastr.options.showEasing = "swing";
+            toastr.options.hideEasing = "linear";
+            toastr.options.showMethod = "fadeIn";
+            toastr.options.hideMethod = "fadeOut";
+            toastr.options.progressBar = false;
+            toastr.options.positionClass = 'toast-top-center';
+            toastr.options.onclick = null;
+            var $toast = toastr['error'](msg, '');
+        }
+    </script>
+</body>
+</html>
+

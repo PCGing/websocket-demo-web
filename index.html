@@ -1,10 +1,76 @@
-<button onclick="webSocketDemo()">webSocketDemo</button>
-<button onclick="toRegister()">toRegister</button>
-<script>
-    function webSocketDemo(){
-        location.href = "./page/talk.html";
-    }
-    function toRegister(){
-        location.href = "./register.html"
-    }
-</script>
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="initial-scale=1, width=device-width, height=device-height, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
+    <title>聊天系统 | 登录</title>
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
+    <link href="./css/toastr/toastr.min.css" rel="stylesheet">
+</head>
+
+<body class="gray-bg">
+    <button onclick="webSocketDemo()">webSocketDemo</button>
+    <button onclick="toRegister()">toRegister</button>
+
+    <script src="./js/jquery-3.1.1.min.js"></script>
+    <script src="./js/jquery.cookie.js"></script>
+    <script src="./js/toastr/toastr.min.js"></script>
+    <script>
+
+        var user = $.cookie('user')
+        $(document).ready(function () {
+            if(typeof(user)=="undefined"){
+                errorhint("请先登录")
+                location.href="./login.html";
+            }
+            user = JSON.parse(user)
+        })
+
+        function webSocketDemo() {
+            location.href = "./page/talk.html";
+        }
+        function toRegister() {
+            location.href = "./register.html"
+        }
+
+        /**
+         * @Author : Write By PCG
+         * @Description:   提示信息
+         * @Date: 16:22 2018/3/2
+         */
+         function hint(status) {
+            var msg = status;
+            toastr.options.timeOut = 2000;
+            toastr.options.showEasing = "swing";
+            toastr.options.hideEasing = "linear";
+            toastr.options.showMethod = "fadeIn";
+            toastr.options.hideMethod = "fadeOut";
+            toastr.options.progressBar = false;
+            toastr.options.positionClass = 'toast-top-center';
+            toastr.options.onclick = null;
+            var $toast = toastr['success'](msg, '');
+        }
+
+        /**
+         * @Author : Write By PCG
+         * @Description:   错误提示信息
+         * @Date: 11:04 2018/3/7
+         */
+        function errorhint(status) {
+            var msg = status;
+            toastr.options.timeOut = 2000;
+            toastr.options.showEasing = "swing";
+            toastr.options.hideEasing = "linear";
+            toastr.options.showMethod = "fadeIn";
+            toastr.options.hideMethod = "fadeOut";
+            toastr.options.progressBar = false;
+            toastr.options.positionClass = 'toast-top-center';
+            toastr.options.onclick = null;
+            var $toast = toastr['error'](msg, '');
+        }
+    </script>
+</body>
+
+</html>
