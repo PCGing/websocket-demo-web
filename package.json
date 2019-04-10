@@ -1,7 +1,7 @@
 {
-  "name": "anchi",
+  "name": "websocket",
   "version": "1.0.0",
-  "description": "anchi",
+  "description": "websocket",
   "main": "gulpfile.js",
   "dependencies": {
     "browser-sync": "^2.26.3",

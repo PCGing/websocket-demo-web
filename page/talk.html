@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no,viewport-fit=cover">
+    <meta name="renderer" content="webkit">
+    <title>聊天页面</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #fff
+        }
+
+        .talk-box {
+            height: 700px;
+            background-color: #F5F5F5;
+            margin-top: 50px;
+        }
+
+        .talk-content {
+            width: 100%;
+            height: 80%;
+        }
+
+        .content {
+            height: 45px;
+            padding-top: 13px;
+        }
+
+        .img-left {
+            float: left;
+        }
+
+        .detail-left {
+            float: left;
+            margin-left: 20px;
+        }
+
+        .img-right {
+            float: right;
+        }
+
+        .detail-right {
+            float: right;
+            margin-right: 20px;
+        }
+
+        .content-detail {
+            height: 30px;
+            background-color: #FFFFFF;
+            width: fit-content;
+            line-height: 32px;
+        }
+        .content-detail span{
+            padding: 0px 15px 0px 15px;
+        }
+
+        .content-img {
+            height: 20px;
+        }
+
+        .talk-bottom {
+            height: 100%;
+        }
+
+        .talk-input {
+            float: left;
+        }
+
+        .talk-send {
+            float: left;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="talk-box">
+        <div class="talk-content" id="talk-content">
+            <div class="content">
+                <div class="content-img img-left"><span>王</span></div>
+                <div class="content-detail detail-left"><span>这是第一条消息</span></div>
+            </div>
+            <div class="content">
+                <div class="content-img img-right"><span>潘</span></div>
+                <div class="content-detail detail-right"><span>这是第二条消息</span></div>
+            </div>
+        </div>
+        <div class="talk-bottom">
+            <div class="talk-input">
+                <input type="text" id="talk_content"/>
+            </div>
+            <div class="talk-send">
+                <button onclick="doSend()">发送</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="../js/jquery-3.1.1.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/jquery.cookie.js"></script>
+    <script>
+        var wsUri = "ws://localhost:8088/websocket/pcg";
+        var output;
+        $(document).ready(function () {
+            init()
+        })
+
+        function init() {
+            output = document.getElementById("output");
+            testWebSocket();
+        }
+
+        function testWebSocket() {
+            websocket = new WebSocket(wsUri);
+            websocket.onopen = function (evt) { onOpen(evt) };
+            websocket.onclose = function (evt) { onClose(evt) };
+            websocket.onmessage = function (evt) { onMessage(evt) };
+            websocket.onerror = function (evt) { onError(evt) };
+        }
+
+        function onOpen(evt) {
+            writeToScreen("打开连接");
+            // doSend("WebSocket rocks");
+        }
+
+        function onClose(evt) {
+            writeToScreen("断开连接");
+        }
+
+        function onMessage(evt) {
+            writeToScreen('<span style="color: blue;">返回: ' + evt.data + '</span>');
+            // websocket.close();
+        }
+
+        function onError(evt) {
+            writeToScreen('<span style="color: red;">错误:</span> ' + evt.data);
+        }
+
+        function doSend() {
+            var message = $("#talk_content").val();
+            if(message==""){
+                return false;
+            }
+            // writeToScreen("发送: " + message);
+            websocket.send(message);
+        }
+
+        function writeToScreen(message) {
+            var html = '';
+            html += '<div class="content">'+
+                    '<div class="content-img img-right"><span>pcg</span></div>'+
+                    '<div class="content-detail detail-right"><span>'+message+'</span></div>'+
+                    '</div>';
+            $("#talk-content").append(html);
+        }
+
+    // window.addEventListener("load", init, false);
+    </script>
+</body>
+
+</html>
