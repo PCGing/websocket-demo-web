@@ -12,8 +12,11 @@
     <div style="position: absolute;width: 100%;top: 0;bottom: 0;background-color: rgba(0,0,0,.75);"></div>
     <div class="middle-box text-center loginscreen animated fadeIn" onkeydown="keyLogin();">
         <div>
-            <h5 class="m-t" style="color:#eee;font-size: 18px;opacity: 0.8;">登录系统</h5>
-            <div class="m-t-lg" style="position:relative;width: 80%;margin-left: 10%;">
+            <h5 class="m-t" style="color:#eee;font-size: 18px;opacity: 0.8;margin-top: 30%;">登录系统</h5>
+            <div class="m-t-lg" style="    position: relative;
+            width: 80%;
+            margin-left: 10%;
+            margin-top: 15%;">
                 <div class="form-group">
                     <input type="text" id="username" style="opacity: 0.9;" class="form-control" placeholder="手机号"required="">
                 </div>
@@ -21,8 +24,14 @@
                     <input id="password" type="password" style="opacity: 0.9;" class="form-control" placeholder="密码"
                         required="">
                 </div>
-                <button type="button" data-style="zoom-in" style="opacity: 0.9;" onclick="login()" class="btn btn-primary block full-width m-b">登录</button>
-                <a style="float:right;" onclick="forgetPassword()">忘记登录密码？</a>
+                <div>
+                    <button type="button" data-style="zoom-in" style="opacity: 0.9;
+                    margin-top: 10%;
+                    width: 50%;" onclick="login()" class="btn btn-primary block full-width m-b">登录</button>
+                </div>
+                <div style="text-align: center; padding-top: 10px;">
+                    <a onclick="forgetPassword()">忘记登录密码？</a>
+                </div>
             </div>
         </div>
     </div>

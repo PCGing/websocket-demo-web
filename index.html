@@ -5,19 +5,60 @@
     <meta charset="utf-8">
     <meta name="viewport"
         content="initial-scale=1, width=device-width, height=device-height, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
-    <title>聊天系统 | 登录</title>
+    <title>聊天系统 | 主页</title>
     <link href="./css/bootstrap.min.css" rel="stylesheet">
     <link href="./css/toastr/toastr.min.css" rel="stylesheet">
-</head>
+    <link href="./css/animate.css" rel="stylesheet">
+    <link href="./css/style.css" rel="stylesheet">
+    <style>
+            .div-bottom {
+                position: absolute;
+                width: 100%;
+                bottom: 10px;
+                height: 50px;
+            }
 
-<body class="gray-bg">
-    <button onclick="webSocketDemo()">webSocketDemo</button>
-    <button onclick="toRegister()">toRegister</button>
+            .div-bottom div{
+                text-align: center;
+            }
+
+            img {
+                width: 45px;
+            }
+            
+        </style>
+    </head>
+    <body class="gray-bg" style="padding-top: calc(4px + constant(safe-area-inset-top));
+        padding-top: calc(4px + env(safe-area-inset-top));">
+        <div style="height:100%;width:100%">
+            <div class="row">
+                <div class="col-xs-3" style="height:40px;line-height: 37px;"><span style="font-size: 15px;padding-left: 10px;">账单</span></div>
+                <div class="col-xs-3 text-right" style="float: right;margin-right: 11px;font-size: 29px;" onclick="addBill()"><i class="fa fa-plus-square-o"></i></div>
+            </div>
+            <div class="row">
+                <div  class="col-xs-5 widget style1 lazur-bg" style="margin-left:30px;" onclick="userIsRoom()">
+                    <span>房间一</span>
+                </div>
+                <div  class="col-xs-5 widget style1 lazur-bg" style="margin-left:10px;">
+                    <span>房间二</span>
+                </div>
+            </div>
+            <div class="row div-bottom">
+                <div class="col-xs-6"><img src="./img/talk.png"></div>
+                <div class="col-xs-6"><img src="./img/user.png" onclick="toUserInfo()"></div>
+            </div>
+        </div>
 
     <script src="./js/jquery-3.1.1.min.js"></script>
     <script src="./js/jquery.cookie.js"></script>
     <script src="./js/toastr/toastr.min.js"></script>
     <script>
+
+        var bathpath = 'http://localhost:8088/websocket/'
+        if (window.location.href.indexOf('localhost') < 0) {
+            bathpath = 'http://114.115.200.225:8088/websocket/'
+        }
+
 
         var user = $.cookie('user')
         $(document).ready(function () {
@@ -27,6 +68,29 @@
             }
             user = JSON.parse(user)
         })
+
+        function userIsRoom(){
+            $.getJSON({
+                url: bathpath + 'room/userIsRoom',
+                type: 'get',
+                data: {
+                    roomId: 1,
+                    userId: 2
+                }
+            })
+            .done(function (data) {
+                if (data.code == 1) {
+                    console.log(data.content)
+                } else {
+                    console.log(data.errorMsg)
+                }
+            })
+            .fail(function (e) {
+                console.error(e.statusText)
+                toastr.info('登录失败')
+            })
+        }
+
 
         function webSocketDemo() {
             location.href = "./page/talk.html";
