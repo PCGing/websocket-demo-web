@@ -107,7 +107,7 @@
         console.log(user)
         var wsUri = "ws://localhost:8088/websocket/" + user.username;
         if (window.location.href.indexOf('localhost') < 0) {
-            wsUri = 'http://114.115.200.225:8088/websocket/'+ user.username;
+            wsUri = 'ws://114.115.200.225:8088/websocket/'+ user.username;
         }
         var output;
         $(document).ready(function () {
