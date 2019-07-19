@@ -79,14 +79,6 @@
 <body>
     <div class="talk-box">
         <div class="talk-content" id="talk-content">
-            <div class="content">
-                <div class="content-img img-left"><span>王</span></div>
-                <div class="content-detail detail-left"><span>这是第一条消息</span></div>
-            </div>
-            <div class="content">
-                <div class="content-img img-right"><span>潘</span></div>
-                <div class="content-detail detail-right"><span>这是第二条消息</span></div>
-            </div>
         </div>
         <div class="talk-bottom">
             <div class="talk-input">
@@ -103,11 +95,17 @@
     <script src="../js/bootstrap.min.js"></script>
     <script src="../js/jquery.cookie.js"></script>
     <script>
-        var user = JSON.parse($.cookie('user'))
-        console.log(user)
-        var wsUri = "ws://localhost:8088/websocket/" + user.username;
+
+        var bathpath = 'http://localhost:8088/websocket/'
         if (window.location.href.indexOf('localhost') < 0) {
-            wsUri = 'ws://114.115.200.225:8088/websocket/'+ user.username;
+            bathpath = 'http://114.115.200.225:8088/websocket/'
+        }
+
+        var user = JSON.parse($.cookie('user'))
+        var id = user.id
+        var wsUri = "ws://localhost:8088/websocket/" + id;
+        if (window.location.href.indexOf('localhost') < 0) {
+            wsUri = 'ws://114.115.200.225:8088/websocket/'+ id;
         }
         var output;
         $(document).ready(function () {
@@ -122,6 +120,41 @@
         function init() {
             output = document.getElementById("output");
             testWebSocket();
+
+            $.getJSON({
+                url: bathpath + 'contentInfo/findContentInfo',
+                type: 'get',
+                data: {
+                    fromUserId: user.id,
+                    toUserId:id
+                }
+            }).done(function (data) {
+                if (data.code == 1) {
+                    var contentInfos = data.content
+                    
+                    var html = '';
+                    for(var i=0;i<contentInfos.length;i++){
+                        var contentInfo = contentInfos[i]
+                        var ori = "";
+                        if(contentInfo.from_user_id==user.id){
+                            ori = "right"
+                        }else{
+                            ori = "left";
+                        }
+                        html += '<div class="content">';
+                        html += '<div class="content-img img-'+ori+'"><span>'+contentInfo.name+'</span></div>';
+                        html += '<div class="content-detail detail-'+ori+'"><span>'+contentInfo.content+'</span></div>';
+                        html += '</div>';
+                    }
+                    $("#talk-content").html(html)
+                } else {
+                    errorhint(data.errorMsg)
+                }
+            })
+            .fail(function (e) {
+                console.error(e.statusText)
+                toastr.info('加载失败')
+            })
         }
 
         function testWebSocket() {
@@ -142,8 +175,22 @@
         }
 
         function onMessage(evt) {
-            writeToScreen('<span style="color: blue;">' + evt.data + '</span>');
-            // websocket.close();
+            var content = JSON.parse(evt.data);
+            if(content.id = user.id){
+                var html = '';
+                html += '<div class="content">' +
+                    '<div class="content-img img-right"><span>'+ user.nickname +'</span></div>' +
+                    '<div class="content-detail detail-right"><span>' + content.message + '</span></div>' +
+                    '</div>';
+                $("#talk-content").append(html);
+            }else{
+                var html = '';
+                html += '<div class="content">' +
+                    '<div class="content-img img-left"><span>'+ user.nickname +'</span></div>' +
+                    '<div class="content-detail detail-left"><span>' + content.message + '</span></div>' +
+                    '</div>';
+                $("#talk-content").append(html);
+            }
         }
 
         function onError(evt) {
@@ -155,8 +202,7 @@
             if (message == "") {
                 return false;
             }
-            // writeToScreen("发送: " + message);
-            websocket.send(message);
+            websocket.send(JSON.stringify({id:user.id+"",message:message}));
         }
 
         function writeToScreen(message) {

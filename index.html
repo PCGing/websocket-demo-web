@@ -35,12 +35,9 @@
                 <div class="col-xs-3" style="height:40px;line-height: 37px;"><span style="font-size: 15px;padding-left: 10px;">账单</span></div>
                 <div class="col-xs-3 text-right" style="float: right;margin-right: 11px;font-size: 29px;" onclick="addBill()"><i class="fa fa-plus-square-o"></i></div>
             </div>
-            <div class="row">
-                <div  class="col-xs-5 widget style1 lazur-bg" style="margin-left:30px;" onclick="userIsRoom()">
+            <div class="row" id="friends">
+                <div class="col-xs-10 widget lazur-bg" style="margin-left:30px;">
                     <span>房间一</span>
-                </div>
-                <div  class="col-xs-5 widget style1 lazur-bg" style="margin-left:10px;">
-                    <span>房间二</span>
                 </div>
             </div>
             <div class="row div-bottom">
@@ -65,32 +62,43 @@
             if(typeof(user)=="undefined"){
                 errorhint("请先登录")
                 location.href="./login.html";
+            }else{
+                user = JSON.parse(user)
             }
-            user = JSON.parse(user)
+            initFriend()
         })
 
-        function userIsRoom(){
+        function initFriend(){
             $.getJSON({
-                url: bathpath + 'room/userIsRoom',
+                url: bathpath + 'friend/findAll',
                 type: 'get',
                 data: {
-                    roomId: 1,
-                    userId: 2
+                    userId: user.id
                 }
-            })
-            .done(function (data) {
+            }).done(function (data) {
                 if (data.code == 1) {
-                    console.log(data.content)
+                    var html = ''
+                    for(var i=0;i<data.content.length;i++){
+                        html += '<div class="col-xs-10 widget lazur-bg" style="margin-left:30px;" onclick="toRoom(\''+ data.content[i].id +'\')">';
+                        html += '<span>'+ data.content[i].nickname +'</span>';
+                        html += '</div>';
+                    }
+                    $("#friends").html(html);
                 } else {
-                    console.log(data.errorMsg)
+                    errorhint(data.errorMsg)
                 }
             })
             .fail(function (e) {
                 console.error(e.statusText)
-                toastr.info('登录失败')
+                toastr.info('加载失败')
             })
         }
 
+        function toRoom(id){
+            console.log(id)
+            $.cookie('id', id, {expires: 240 / 24})
+            location.href = "./page/room.html";
+        }
 
         function webSocketDemo() {
             location.href = "./page/talk.html";
